@@ -1,5 +1,6 @@
 import 'package:arkit_plugin/geometries/arkit_geometry.dart';
 import 'package:arkit_plugin/light/arkit_light.dart';
+import 'package:arkit_plugin/action/arkit_action.dart';
 import 'package:arkit_plugin/physics/arkit_physics_body.dart';
 import 'package:arkit_plugin/utils/json_converters.dart';
 import 'package:arkit_plugin/utils/matrix4_ext.dart';
@@ -11,25 +12,28 @@ import 'package:vector_math/vector_math_64.dart';
 /// It encapsulates the position, rotations, and other transforms of a node, which define a coordinate system.
 /// The coordinate systems of all the sub-nodes are relative to the one of their parent node.
 class ARKitNode {
-  ARKitNode({
-    this.geometry,
-    this.physicsBody,
-    this.light,
-    this.renderingOrder = 0,
-    bool isHidden = false,
-    Vector3 position,
-    Vector3 scale,
-    Vector4 rotation,
-    Vector3 eulerAngles,
-    String name,
-    Matrix4 transformation,
-  })  : name = name ?? random_string.randomString(),
+  ARKitNode(
+      {this.geometry,
+      this.physicsBody,
+      this.light,
+      this.renderingOrder = 0,
+      bool isHidden = false,
+      Vector3 position,
+      Vector3 scale,
+      Vector4 rotation,
+      Vector3 eulerAngles,
+      String name,
+      Matrix4 transformation,
+      this.rotateAction})
+      : name = name ?? random_string.randomString(),
         isHidden = ValueNotifier(isHidden),
         transformNotifier = ValueNotifier(createTransformMatrix(
             transformation, position, scale, rotation, eulerAngles));
 
   /// Returns the geometry attached to the receiver.
   final ARKitGeometry geometry;
+
+  final ARKitRotateAction rotateAction;
 
   /// Determines the receiver's transform.
   /// The transform is the combination of the position, rotation and scale defined below.
@@ -112,6 +116,7 @@ class ARKitNode {
         'light': light?.toJson(),
         'name': name,
         'renderingOrder': renderingOrder,
+        'rotateAction': rotateAction.toJson(),
         'isHidden': _boolValueNotifierConverter.toJson(isHidden),
       }..removeWhere((String k, dynamic v) => v == null);
 }

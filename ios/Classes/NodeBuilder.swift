@@ -27,6 +27,10 @@ func createNode(_ geometry: SCNGeometry?, fromDict dict: Dictionary<String, Any>
         node.renderingOrder = renderingOrder
     }
     
+    if let rotateAction = dict["rotateAction"] as? Dictionary<String, Double> {
+        node.runAction(createRotateAction(rotateAction));
+    }
+    
     if let isHidden = dict["isHidden"] as? Bool {
         node.isHidden = isHidden
     }
@@ -43,6 +47,7 @@ fileprivate func createReferenceNode(_ dict: Dictionary<String, Any>) -> SCNRefe
         referenceUrl = URL(fileURLWithPath: url)
     }
     let node = SCNReferenceNode(url: referenceUrl)
+
     node?.load()
     return node!
 }
@@ -61,6 +66,14 @@ fileprivate func createPhysicsBody(_ dict: Dictionary<String, Any>, forDevice de
         physicsBody.categoryBitMask = categoryBitMack
     }
     return physicsBody
+}
+
+fileprivate func createRotateAction(_ dict: Dictionary<String, Double>) -> SCNAction {
+    let action = SCNAction.rotateBy(x: CGFloat(dict["x"] ?? 0.0),
+                                    y: CGFloat(dict["y"] ?? 0.0),
+                                    z: CGFloat(dict["z"] ?? 0.0),
+                                    duration: dict["duration"]!);
+    return action;
 }
 
 fileprivate func createLight(_ dict: Dictionary<String, Any>) -> SCNLight {
